@@ -1,15 +1,40 @@
 @use "./reset";
 
 :root {
-  --el-color-primary: #409eff;
-  --medical-blue: #409eff;
-  --medical-blue-light: #ecf5ff;
-  --medical-blue-dark: #337ecc;
-  --medical-bg: #f0f2f5;
-  --medical-text-main: #303133;
-  --medical-text-regular: #606266;
-  --medical-text-secondary: #909399;
-  --medical-border: #dcdfe6;
+  --medical-primary: #9a6a43;
+  --medical-primary-light: #efe2d4;
+  --medical-primary-soft: #f7f3ef;
+  --medical-primary-dark: #6f4b2f;
+  --medical-accent: #c9895d;
+  --medical-sage: #6f8263;
+  --medical-sage-soft: #eef4ea;
+  --medical-rose: #c87868;
+  --medical-gold: #d6a85c;
+  --medical-bg: #f6f8fb;
+  --medical-surface: #ffffff;
+  --medical-surface-strong: #ffffff;
+  --medical-text-main: #2f2923;
+  --medical-text-regular: #66584b;
+  --medical-text-secondary: #9a8a7a;
+  --medical-border: #e5e7eb;
+  --medical-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+
+  --el-color-primary: var(--medical-primary);
+  --el-color-primary-light-3: #b88962;
+  --el-color-primary-light-5: #cfaa88;
+  --el-color-primary-light-7: #e4cab2;
+  --el-color-primary-light-8: #edd9c7;
+  --el-color-primary-light-9: var(--medical-primary-soft);
+  --el-color-primary-dark-2: var(--medical-primary-dark);
+  --el-color-success: var(--medical-sage);
+  --el-color-warning: var(--medical-gold);
+  --el-color-danger: var(--medical-rose);
+  --el-bg-color-page: var(--medical-bg);
+  --el-bg-color: var(--medical-surface-strong);
+  --el-text-color-primary: var(--medical-text-main);
+  --el-text-color-regular: var(--medical-text-regular);
+  --el-text-color-secondary: var(--medical-text-secondary);
+  --el-border-color: var(--medical-border);
 }
 
 html,
@@ -22,7 +47,7 @@ body,
 body {
   margin: 0;
   font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background-color: var(--medical-bg);
+  background: var(--medical-bg);
   color: var(--medical-text-main);
   -webkit-font-smoothing: antialiased;
 }
@@ -39,7 +64,7 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c0c4cc;
+  background: #cbd5e1;
   border-radius: 3px;
 }
 
@@ -49,9 +74,39 @@ a {
 
 /* Element Plus Overrides */
 .el-button--primary {
-  --el-button-bg-color: var(--medical-blue);
-  --el-button-border-color: var(--medical-blue);
-  --el-button-hover-bg-color: var(--medical-blue-dark);
-  --el-button-hover-border-color: var(--medical-blue-dark);
+  --el-button-bg-color: var(--medical-primary);
+  --el-button-border-color: var(--medical-primary);
+  --el-button-hover-bg-color: var(--medical-primary-dark);
+  --el-button-hover-border-color: var(--medical-primary-dark);
+  --el-button-active-bg-color: var(--medical-primary-dark);
+  --el-button-active-border-color: var(--medical-primary-dark);
+}
+
+.el-card,
+.el-dialog,
+.el-message-box {
+  border-color: rgba(226, 232, 240, 0.92) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--medical-shadow) !important;
+}
+
+.el-input__wrapper,
+.el-textarea__inner,
+.el-select__wrapper {
+  background-color: #fff !important;
+  border-radius: 14px !important;
+  box-shadow: 0 0 0 1px rgba(226, 232, 240, 0.95) inset !important;
+}
+
+.el-input__wrapper.is-focus,
+.el-textarea__inner:focus,
+.el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px var(--medical-primary) inset, 0 0 0 4px rgba(154, 106, 67, 0.1) !important;
+}
+
+.el-table {
+  --el-table-header-bg-color: #f8fafc;
+  --el-table-tr-bg-color: #ffffff;
+  --el-table-row-hover-bg-color: #f7f3ef;
 }
 

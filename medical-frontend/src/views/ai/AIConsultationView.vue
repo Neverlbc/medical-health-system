@@ -7,12 +7,12 @@
           <div class="bot-avatar-ring">
             <div class="bot-avatar">
               <svg viewBox="0 0 128 128" class="med-bot-svg">
-                <rect x="24" y="32" width="80" height="72" rx="20" fill="#f0f7ff" stroke="#2a64ff" stroke-width="4" />
-                <rect x="36" y="48" width="56" height="30" rx="8" fill="#fff" stroke="#2a64ff" stroke-width="2" />
-                <ellipse cx="50" cy="63" rx="4" ry="6" fill="#2a64ff"><animate attributeName="ry" values="6;1;6" dur="3s" repeatCount="indefinite" /></ellipse>
-                <ellipse cx="78" cy="63" rx="4" ry="6" fill="#2a64ff"><animate attributeName="ry" values="6;1;6" dur="3s" repeatCount="indefinite" /></ellipse>
-                <path d="M48 88 L55 88 L58 82 L63 94 L66 88 L75 88" fill="none" stroke="#2a64ff" stroke-width="2.5" stroke-linecap="round" />
-                <rect x="58" y="38" width="12" height="4" rx="1.5" fill="#ff4d4f" /><rect x="62" y="34" width="4" height="12" rx="1.5" fill="#ff4d4f" />
+                <rect x="24" y="32" width="80" height="72" rx="20" fill="#fbf4ec" stroke="#9a6a43" stroke-width="4" />
+                <rect x="36" y="48" width="56" height="30" rx="8" fill="#fffaf5" stroke="#9a6a43" stroke-width="2" />
+                <ellipse cx="50" cy="63" rx="4" ry="6" fill="#9a6a43"><animate attributeName="ry" values="6;1;6" dur="3s" repeatCount="indefinite" /></ellipse>
+                <ellipse cx="78" cy="63" rx="4" ry="6" fill="#9a6a43"><animate attributeName="ry" values="6;1;6" dur="3s" repeatCount="indefinite" /></ellipse>
+                <path d="M48 88 L55 88 L58 82 L63 94 L66 88 L75 88" fill="none" stroke="#6f8263" stroke-width="2.5" stroke-linecap="round" />
+                <rect x="58" y="38" width="12" height="4" rx="1.5" fill="#c87868" /><rect x="62" y="34" width="4" height="12" rx="1.5" fill="#c87868" />
               </svg>
             </div>
             <div class="online-status"></div>
@@ -44,40 +44,24 @@
             </el-avatar>
             <div v-else class="a-avatar">
               <svg viewBox="0 0 128 128" class="med-bot-svg">
-                <rect x="24" y="32" width="80" height="72" rx="20" fill="#fff" stroke="#2a64ff" stroke-width="5" />
-                <rect x="36" y="48" width="56" height="30" rx="8" fill="#f0f7ff" />
-                <circle cx="50" cy="63" r="4" fill="#2a64ff" /><circle cx="78" cy="63" r="4" fill="#2a64ff" />
-                <rect x="58" y="38" width="12" height="4" rx="1.5" fill="#ff4d4f" /><rect x="62" y="34" width="4" height="12" rx="1.5" fill="#ff4d4f" />
+                <rect x="24" y="32" width="80" height="72" rx="20" fill="#fffaf5" stroke="#9a6a43" stroke-width="5" />
+                <rect x="36" y="48" width="56" height="30" rx="8" fill="#fbf4ec" />
+                <circle cx="50" cy="63" r="4" fill="#9a6a43" /><circle cx="78" cy="63" r="4" fill="#9a6a43" />
+                <rect x="58" y="38" width="12" height="4" rx="1.5" fill="#c87868" /><rect x="62" y="34" width="4" height="12" rx="1.5" fill="#c87868" />
               </svg>
             </div>
           </div>
           <div class="msg-bubble" :class="{ 'is-streaming': item.isStreaming }">
             <div class="bubble-content">
-              <span v-html="formatContent(item.content)"></span>
+              <div v-if="item.content" class="formatted-content" v-html="formatContent(item.content)"></div>
+              <span v-else-if="item.isStreaming" class="typing-dots inline-typing">
+                <span></span><span></span><span></span>
+              </span>
               <span v-if="item.isStreaming" class="typing-cursor">|</span>
             </div>
             <div class="bubble-footer">
               <span class="msg-time">{{ formatTime(item.id) }}</span>
               <span v-if="item.isStreaming" class="streaming-tag">AI 正在输入...</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 输入中动效 -->
-        <div v-if="loading" class="msg-row assistant">
-          <div class="msg-avatar">
-            <div class="a-avatar">
-              <svg viewBox="0 0 128 128" class="med-bot-svg">
-                <rect x="24" y="32" width="80" height="72" rx="20" fill="#fff" stroke="#2a64ff" stroke-width="5" />
-                <rect x="36" y="48" width="56" height="30" rx="8" fill="#f0f7ff" />
-                <circle cx="50" cy="63" r="4" fill="#2a64ff" /><circle cx="78" cy="63" r="4" fill="#2a64ff" />
-                <rect x="58" y="38" width="12" height="4" rx="1.5" fill="#ff4d4f" /><rect x="62" y="34" width="4" height="12" rx="1.5" fill="#ff4d4f" />
-              </svg>
-            </div>
-          </div>
-          <div class="msg-bubble typing-bubble">
-            <div class="typing-dots">
-              <span></span><span></span><span></span>
             </div>
           </div>
         </div>
@@ -89,7 +73,7 @@
           <el-input
             v-model="question"
             type="textarea"
-            :rows="3"
+            :rows="2"
             placeholder="请详细描述您的症状，例如：'头痛持续了两天，伴有恶心'..."
             @keydown="onKeydown"
             resize="none"
@@ -119,7 +103,7 @@ import { useAuthStore } from '@/store/modules/auth';
 import { Delete, Position, Loading, Warning } from '@element-plus/icons-vue';
 
 // AI 回复免责尾注
-const AI_DISCLAIMER = '\n\n---\n*⚠️ 以上内容由 AI 自动生成，仅供健康参考，不构成医疗诊断。如有疑问请咨询专业医生。*';
+const AI_DISCLAIMER = '\n\n提示：以上内容由 AI 自动生成，仅供健康参考，不构成医疗诊断。如有疑问请咨询专业医生。';
 
 // API 基础路径
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
@@ -291,11 +275,34 @@ const clearHistory = () => {
 
 const formatTime = (ts: number) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-const formatContent = (content: string) => {
+const escapeHtml = (content: string) => {
+  return content.replace(/[&<>"']/g, char => {
+    const entities: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+    return entities[char];
+  });
+};
+
+const normalizeContent = (content: string) => {
   return content
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^[-*_]{3,}\s*$/gm, '')
+    .replace(/^\*?⚠️?\s*(以上内容由 AI 自动生成，仅供健康参考，不构成医疗诊断。如有疑问请咨询专业医生。)\*?$/gm, '提示：$1')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+};
+
+const formatContent = (content: string) => {
+  return escapeHtml(normalizeContent(content))
+    .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
+    .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^\s*[-*]\s+(.+)$/gm, '<div class="ai-list-item">$1</div>')
+    .replace(/^(提示：以上内容由 AI 自动生成，仅供健康参考，不构成医疗诊断。如有疑问请咨询专业医生。)$/gm, '<span class="ai-note">$1</span>')
     .replace(/\n/g, '<br>');
 };
 
@@ -304,28 +311,34 @@ onMounted(loadHistory);
 
 <style scoped lang="scss">
 .ai-consultation-container {
-  height: 100%;
+  width: calc(100% + 80px);
+  height: calc(100vh - 76px);
+  min-height: 720px;
+  margin: -36px -40px;
   display: flex;
-  justify-content: center;
+  justify-content: stretch;
+  align-items: stretch;
 }
 
 .ai-chat-card {
   width: 100%;
-  max-width: 1000px;
-  background: #fff;
-  border-radius: 24px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  background: #fffaf5;
+  border-radius: 0;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid #edf2f7;
+  border: none;
 }
 
 // 头部
 .chat-header {
-  padding: 20px 30px;
-  background: #fff;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 22px 48px;
+  background: rgba(255, 250, 245, 0.96);
+  border-bottom: 1px solid #eadbca;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -334,23 +347,23 @@ onMounted(loadHistory);
     display: flex; align-items: center; gap: 15px;
     .bot-avatar-ring {
       position: relative;
-      .bot-avatar { width: 44px; height: 44px; background: #f0f7ff; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #e1effe; }
-      .online-status { position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; background: #52c41a; border: 2px solid #fff; border-radius: 50%; }
+      .bot-avatar { width: 44px; height: 44px; background: #fbf4ec; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #eadbca; }
+      .online-status { position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; background: #6f8263; border: 2px solid #fffaf5; border-radius: 50%; }
     }
     .bot-meta {
-      h3 { margin: 0; font-size: 17px; font-weight: 800; color: #1e293b; }
-      p { margin: 0; font-size: 12px; color: #94a3b8; font-weight: 600; }
+      h3 { margin: 0; font-size: 17px; font-weight: 800; color: #2f2923; }
+      p { margin: 0; font-size: 12px; color: #9a8a7a; font-weight: 600; }
     }
   }
 
-  .action-btn { color: #94a3b8; font-weight: 600; font-size: 13px; &:hover { color: #ff4d4f; } }
+  .action-btn { color: #9a8a7a; font-weight: 600; font-size: 13px; &:hover { color: #c87868; } }
 }
 
 // 免责声明横幅
 .ai-disclaimer-banner {
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   border-bottom: 1px solid #f59e0b;
-  padding: 12px 30px;
+  padding: 12px 48px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -373,68 +386,109 @@ onMounted(loadHistory);
 
 // 对话区
 .chat-main {
-  flex: 1; overflow-y: auto; padding: 30px; background-color: #f8fafc;
+  flex: 1; overflow-y: auto; padding: 34px 52px; background:
+    radial-gradient(circle at 10% 5%, rgba(214, 168, 92, 0.09), transparent 28%),
+    #f6efe6;
   display: flex; flex-direction: column; gap: 24px;
 }
 
 .msg-row {
-  display: flex; gap: 16px; max-width: 85%;
+  display: flex; gap: 16px; max-width: 92%;
   &.user { align-self: flex-end; flex-direction: row-reverse;
-    .msg-bubble { background: #2a64ff; color: #fff; border-radius: 20px 20px 4px 20px; box-shadow: 0 8px 20px rgba(42,100,255,0.15); }
+    .msg-bubble { background: linear-gradient(135deg, #9a6a43, #c9895d); color: #fffaf5; border-radius: 20px 20px 4px 20px; box-shadow: 0 8px 20px rgba(154,106,67,0.18); }
     .msg-time { color: rgba(255,255,255,0.6); }
   }
   &.assistant { align-self: flex-start;
-    .msg-bubble { background: #fff; color: #334155; border-radius: 20px 20px 20px 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #edf2f7; }
+    .msg-bubble { background: #fffaf5; color: #66584b; border-radius: 20px 20px 20px 4px; box-shadow: 0 4px 15px rgba(77,54,36,0.04); border: 1px solid #eadbca; }
   }
 }
 
 .msg-avatar {
   flex-shrink: 0;
-  .u-avatar { background: linear-gradient(135deg, #2a64ff, #64dcff); font-weight: 800; }
-  .a-avatar { width: 40px; height: 40px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; overflow: hidden;
+  .u-avatar { background: linear-gradient(135deg, #9a6a43, #d6a85c); font-weight: 800; }
+  .a-avatar { width: 40px; height: 40px; background: #fffaf5; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(77,54,36,0.06); border: 1px solid #eadbca; overflow: hidden;
     .med-bot-svg { width: 85%; height: 85%; }
   }
 }
 
 .msg-bubble {
-  padding: 16px 20px; position: relative;
-  .bubble-content { font-size: 15px; line-height: 1.7; word-break: break-word; 
+  padding: 20px 24px; position: relative;
+  .bubble-content { font-size: 16px; line-height: 1.85; word-break: break-word;
     :deep(h3) { font-size: 16px; margin: 10px 0 5px; }
-    :deep(strong) { color: #2a64ff; font-weight: 700; }
+    :deep(strong) { color: #9a6a43; font-weight: 700; }
+    :deep(.ai-note) {
+      display: inline-block;
+      margin-top: 8px;
+      color: #9a8a7a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    :deep(.ai-list-item) {
+      position: relative;
+      padding-left: 14px;
+      margin: 2px 0;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.85em;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #b8a693;
+      }
+    }
   }
   .bubble-footer { margin-top: 8px; display: flex; align-items: center; gap: 10px; }
   .msg-time { font-size: 11px; font-weight: 600; opacity: 0.7; }
 }
 
 // 正在输入
-.typing-bubble { display: flex; align-items: center; min-width: 60px;
-  .typing-dots { display: flex; gap: 4px;
-    span { width: 6px; height: 6px; background: #cbd5e1; border-radius: 50%; animation: bounce 1.4s infinite;
-      &:nth-child(2) { animation-delay: 0.2s; } &:nth-child(3) { animation-delay: 0.4s; }
-    }
+.typing-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  span {
+    width: 6px;
+    height: 6px;
+    background: #cdbba8;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
   }
+}
+
+.inline-typing {
+  min-width: 36px;
+  margin-right: 6px;
 }
 
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
 // 尾部输入区
 .chat-footer {
-  padding: 24px 30px; background: #fff; border-top: 1px solid #f1f5f9;
+  padding: 10px 40px 12px; background: rgba(255, 250, 245, 0.98); border-top: 1px solid #eadbca;
   
   .input-wrapper { position: relative; }
   .chat-input :deep(.el-textarea__inner) {
-    background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; padding: 15px 20px; font-size: 15px; transition: 0.3s;
-    &:focus { border-color: #2a64ff; background: #fff; box-shadow: 0 0 0 4px rgba(42,100,255,0.05); }
+    min-height: 58px !important;
+    background: #f6efe6; border-radius: 14px; border: 1px solid #eadbca; padding: 10px 16px; font-size: 14px; transition: 0.3s;
+    &:focus { border-color: #9a6a43; background: #fffaf5; box-shadow: 0 0 0 4px rgba(154,106,67,0.08); }
   }
 
   .footer-bottom {
-    margin-top: 15px; display: flex; justify-content: space-between; align-items: center;
-    .safety-tip { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #94a3b8; font-weight: 600; }
-    .send-btn { 
-      background: #2a64ff; color: #fff; border: none; padding: 10px 24px; border-radius: 12px; 
+    margin-top: 8px; display: flex; justify-content: space-between; align-items: center;
+    .safety-tip { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: #9a8a7a; font-weight: 600; }
+    .send-btn {
+      min-width: 116px;
+      background: #9a6a43; color: #fffaf5; border: none; padding: 8px 18px; border-radius: 10px;
       font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s;
-      &:hover:not(:disabled) { background: #1e50e6; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(42,100,255,0.25); }
-      &:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
+      &:hover:not(:disabled) { background: #6f4b2f; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(154,106,67,0.24); }
+      &:disabled { background: #e7d9ca; color: #9a8a7a; cursor: not-allowed; }
     }
   }
 }
@@ -442,7 +496,7 @@ onMounted(loadHistory);
 // 打字机效果 - 闪烁光标
 .typing-cursor {
   display: inline-block;
-  color: #2a64ff;
+  color: #9a6a43;
   font-weight: 700;
   animation: blink 1s step-end infinite;
 }
@@ -454,13 +508,13 @@ onMounted(loadHistory);
 
 // 流式消息样式
 .msg-bubble.is-streaming {
-  border: 1px solid #2a64ff !important;
-  box-shadow: 0 0 0 3px rgba(42, 100, 255, 0.1) !important;
+  border: 1px solid #9a6a43 !important;
+  box-shadow: 0 0 0 3px rgba(154, 106, 67, 0.1) !important;
 }
 
 .streaming-tag {
   font-size: 10px;
-  color: #2a64ff;
+  color: #9a6a43;
   background: #e8f4ff;
   padding: 2px 8px;
   border-radius: 4px;
@@ -473,15 +527,38 @@ onMounted(loadHistory);
   50% { opacity: 0.5; }
 }
 
+@media (max-width: 1024px) and (min-width: 769px) {
+  .ai-consultation-container {
+    width: calc(100% + 40px);
+    height: calc(100vh - 76px);
+    margin: -20px;
+  }
+
+  .chat-header,
+  .ai-disclaimer-banner,
+  .chat-footer {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .chat-main {
+    padding: 28px;
+  }
+}
+
 // 移动端适配
 @media (max-width: 768px) {
   .ai-consultation-container {
+    width: calc(100% + 32px);
+    height: calc(100vh - 64px);
+    min-height: 0;
+    margin: -16px;
     padding: 0;
   }
   
   .ai-chat-card {
     border-radius: 0;
-    height: 100vh;
+    height: 100%;
     max-width: 100%;
   }
   
@@ -499,9 +576,9 @@ onMounted(loadHistory);
   }
   
   .ai-disclaimer-banner {
-    margin: 0 12px 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
+    margin: 0;
+    padding: 10px 16px;
+    border-radius: 0;
     font-size: 12px;
     
     .el-icon {
@@ -545,16 +622,17 @@ onMounted(loadHistory);
   }
   
   .chat-footer {
-    padding: 12px 16px;
+    padding: 10px 16px 12px;
     
     .chat-input :deep(.el-textarea__inner) {
-      padding: 12px 14px;
+      min-height: 56px !important;
+      padding: 10px 12px;
       font-size: 14px;
       border-radius: 12px;
     }
     
     .footer-bottom {
-      margin-top: 10px;
+      margin-top: 8px;
       
       .safety-tip {
         display: none;

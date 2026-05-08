@@ -250,10 +250,10 @@ const selectedDept = ref('');
 
 // 统计数据
 const stats = computed(() => [
-  { label: '我的预约', value: appointments.value.length, icon: 'List', color: '#409EFF', bg: 'rgba(64,158,255,0.1)' },
-  { label: '待就诊', value: appointments.value.filter(a => a.status === 0).length, icon: 'Timer', color: '#E6A23C', bg: 'rgba(230,162,60,0.1)' },
-  { label: '医生总数', value: doctorList.value.length, icon: 'User', color: '#67C23A', bg: 'rgba(103,194,58,0.1)' },
-  { label: '累计接诊', value: doctorList.value.reduce((acc, d) => acc + (d.patientCount || 0), 0), icon: 'Histogram', color: '#F56C6C', bg: 'rgba(245,108,108,0.1)' }
+  { label: '我的预约', value: appointments.value.length, icon: 'List', color: '#9a6a43', bg: 'rgba(154,106,67,0.1)' },
+  { label: '待就诊', value: appointments.value.filter(a => a.status === 0).length, icon: 'Timer', color: '#c9895d', bg: 'rgba(201,137,93,0.12)' },
+  { label: '医生总数', value: doctorList.value.length, icon: 'User', color: '#6f8263', bg: 'rgba(111,130,99,0.12)' },
+  { label: '累计接诊', value: doctorList.value.reduce((acc, d) => acc + (d.patientCount || 0), 0), icon: 'Histogram', color: '#c87868', bg: 'rgba(200,120,104,0.12)' }
 ]);
 
 const loadAppointments = async () => {
@@ -479,8 +479,8 @@ const getStatusText = (status: number) => {
 
     .header-icon {
       font-size: 32px;
-      color: #79bbff;
-      background: rgba(121, 187, 255, 0.1);
+      color: #9a6a43;
+      background: #fbf4ec;
       padding: 12px;
       border-radius: 12px;
     }
@@ -505,7 +505,9 @@ const getStatusText = (status: number) => {
     padding-right: 24px;
     height: 44px;
     border-radius: 22px;
-    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
+    border: none;
+    background: linear-gradient(135deg, #9a6a43 0%, #c9895d 100%);
+    box-shadow: 0 12px 28px rgba(154, 106, 67, 0.22);
   }
 }
 
@@ -575,7 +577,7 @@ const getStatusText = (status: number) => {
     .dept-tag {
       font-size: 13px;
       font-weight: 600;
-      color: #337ecc;
+      color: #8a5a38;
     }
     .appointment-id {
       font-size: 12px;
@@ -589,7 +591,7 @@ const getStatusText = (status: number) => {
     align-items: center;
     gap: 10px;
     .doc-avatar {
-      background: linear-gradient(135deg, #1890ff 0%, #001529 100%);
+      background: linear-gradient(135deg, #9a6a43 0%, #6f4b2f 100%);
       color: white;
     }
   }
@@ -612,15 +614,15 @@ const getStatusText = (status: number) => {
     margin-right: 6px;
     vertical-align: middle;
 
-    &.pending { background-color: #409EFF; }
-    &.completed { background-color: #67C23A; }
+    &.pending { background-color: #9a6a43; }
+    &.completed { background-color: #6f8263; }
     &.cancelled { background-color: #909399; }
   }
 
   .status-text {
     font-size: 13px;
-    &.pending { color: #409EFF; }
-    &.completed { color: #67C23A; }
+    &.pending { color: #8a5a38; }
+    &.completed { color: #6f8263; }
     &.cancelled { color: #909399; }
   }
 
@@ -659,7 +661,7 @@ const getStatusText = (status: number) => {
     &:hover {
       transform: translateY(-4px);
       box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      border-color: #c6e2ff;
+      border-color: rgba(154, 106, 67, 0.28);
     }
 
     .doc-card-header {
@@ -667,7 +669,7 @@ const getStatusText = (status: number) => {
       gap: 16px;
       margin-bottom: 16px;
       .doc-main-avatar {
-        background: skyblue;
+        background: linear-gradient(135deg, #9a6a43, #d6a85c);
       }
       .doc-title-info {
         h3 { margin: 0; font-size: 18px; }
@@ -748,16 +750,16 @@ const getStatusText = (status: number) => {
     .has-schedule-dot {
       width: 4px;
       height: 4px;
-      background: #409EFF;
+      background: #d6a85c;
       border-radius: 50%;
       position: absolute;
       bottom: 8px;
     }
 
     &.active {
-      background: #409EFF;
+      background: linear-gradient(135deg, #9a6a43, #c9895d);
       color: white;
-      border-color: #409EFF;
+      border-color: #9a6a43;
       .day-name { color: rgba(255,255,255,0.8); }
     }
 
@@ -769,7 +771,7 @@ const getStatusText = (status: number) => {
 
     &:hover:not(.disabled) {
       transform: translateY(-2px);
-      border-color: #409EFF;
+      border-color: #9a6a43;
     }
   }
 }
@@ -798,9 +800,9 @@ const getStatusText = (status: number) => {
     }
 
     &.active {
-      border-color: #409EFF;
-      background: rgba(64,158,255,0.05);
-      .p-name { color: #409EFF; }
+      border-color: #9a6a43;
+      background: rgba(154, 106, 67, 0.08);
+      .p-name { color: #8a5a38; }
     }
 
     &.full, &.unavailable {
@@ -823,6 +825,54 @@ const getStatusText = (status: number) => {
 }
 
 .full-width { width: 100%; }
+
+:deep(.el-button--primary) {
+  --el-button-bg-color: #9a6a43;
+  --el-button-border-color: #9a6a43;
+  --el-button-hover-bg-color: #8a5a38;
+  --el-button-hover-border-color: #8a5a38;
+  --el-button-active-bg-color: #6f4b2f;
+  --el-button-active-border-color: #6f4b2f;
+}
+
+:deep(.el-button--primary.is-link) {
+  --el-button-text-color: #8a5a38;
+  --el-button-hover-link-text-color: #6f4b2f;
+  --el-button-active-color: #6f4b2f;
+}
+
+:deep(.modern-tabs) {
+  .el-tabs__item {
+    color: #66584b;
+    font-weight: 700;
+
+    &:hover,
+    &.is-active {
+      color: #8a5a38;
+    }
+  }
+
+  .el-tabs__active-bar {
+    background-color: #9a6a43;
+  }
+}
+
+.period-tag {
+  border-color: rgba(154, 106, 67, 0.36);
+  background: #fffaf5;
+  color: #8a5a38;
+}
+
+:deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+  border-color: #9a6a43;
+  background: #9a6a43;
+  box-shadow: -1px 0 0 0 #9a6a43;
+  color: #fff;
+}
+
+:deep(.el-radio-button__inner:hover) {
+  color: #8a5a38;
+}
 
 // 移动端适配
 @media (max-width: 768px) {

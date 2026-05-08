@@ -2,7 +2,7 @@
 
 本文件描述后端 HTTP 与 WebSocket 接口的使用方式与统一规范。文档随版本演进更新，未上线的接口会标注“计划中”或“暂未实现”。
 
-最后更新时间：2026-01-28
+最后更新时间：2026-05-04
 
 ## 基础信息
 - 基础路径：`http://localhost:8080/api/v1`
@@ -223,8 +223,13 @@ Authorization: Bearer <token>
 - 查询参数
   - `pageNum`：页码（默认 1）
   - `pageSize`：每页数量（默认 10）
-  - `keyword`：搜索关键词（可选，搜索备注字段）
+  - `keyword`：搜索关键词（可选，搜索患者姓名、备注、过敏史、家族史、既往史及结构化聚合摘要）
   - `userId`：患者ID（可选，医生/管理员可用于过滤）
+- 列表摘要规则
+  - `allergies`：优先返回 `patient_record.allergies`；为空时回退到 `patient_allergy` 聚合摘要；仍为空时回退到 `patient_info.allergies`
+  - `familyHistory`：优先返回 `patient_record.family_history`；为空时回退到 `patient_history(history_type='FAMILY')` 聚合摘要；仍为空时回退到 `patient_info.family_history`
+  - `medicalHistory`：优先返回 `patient_record.medical_history`；为空时回退到 `patient_history(history_type='PAST')` 聚合摘要；仍为空时回退到 `patient_info.medical_history` 或近诊断摘要
+  - 聚合摘要使用 `patient_info.id` 关联结构化明细表中的 `patient_id`
 - 请求示例
 ```
 GET /api/v1/record/list?pageNum=1&pageSize=10&keyword=高血压&userId=1001
@@ -239,6 +244,9 @@ GET /api/v1/record/list?pageNum=1&pageSize=10&keyword=高血压&userId=1001
       {
         "id": 1,
         "userId": 1001,
+        "patientName": "张三",
+        "gender": 1,
+        "age": 34,
         "allergies": "青霉素过敏",
         "familyHistory": "父亲有高血压",
         "medicalHistory": "无重大疾病史",

@@ -38,6 +38,16 @@ export default defineConfig(({ mode }) => {
           rewrite: (pathStr) => pathStr.replace(/^\/api/, '/api')
         }
       }
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          silenceDeprecations: ['legacy-js-api']
+        },
+        sass: {
+          silenceDeprecations: ['legacy-js-api']
+        }
+      }
     }
   };
 });

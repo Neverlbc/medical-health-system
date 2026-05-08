@@ -11,12 +11,13 @@
   - 接口文档：`API.md`
   - 数据库设计与脚本：`DATABASE.md`、`sql/`
   - AI 集成说明（DeepSeek）：`DEEPSEEK_INTEGRATION.md`
+  - 云小医 Agent 设计说明：`YUN_XIAO_YI_AGENT.md`
   - 代理/智能体约定：`AGENTS.md`
 - 计划与管理
   - 迭代计划总览：`plans/README.md`
-  - 具体迭代计划：`plans/iteration-01.md`、`plans/iteration-02.md`、`plans/iteration-03.md`
+  - 具体迭代计划：`plans/iteration-01.md`、`plans/iteration-02.md`、`plans/iteration-03.md`、`plans/iteration-04.md`
   - 长期改进方案：`plans/health-record-improvement-plan.md`
-  - 项目状态总览：`STATUS.md`
+  - 项目状态总览：`STATUS.md`（当前重点：云小医 Agent、温暖高级 UI、健康档案摘要完善、本地联调）
 - 历史与归档
   - 功能验证与测试报告：`archive/`
 
@@ -32,4 +33,4 @@
 - 代码片段：使用围栏代码块并标注语言
 - 图片与附件：放入 `docs/assets/` 或相邻子目录，引用相对路径
 
-最后更新：2026-01-27
+最后更新：2026-05-04

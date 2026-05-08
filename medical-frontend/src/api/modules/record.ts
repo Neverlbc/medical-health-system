@@ -3,6 +3,9 @@ import http from '@/api/http';
 export interface PatientRecord {
   id?: number;
   userId?: number;
+  patientName?: string;
+  gender?: number;
+  age?: number;
   allergies?: string;
   familyHistory?: string;
   medicalHistory?: string;

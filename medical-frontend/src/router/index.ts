@@ -118,6 +118,8 @@ const router = createRouter({
   routes
 });
 
+const normalizeRole = (role?: string) => role?.replace(/^ROLE_/, '');
+
 router.beforeEach((to, _from, next) => {
   const store = useAuthStore();
   if (!to.meta.public && !store.isAuthenticated) {
@@ -127,7 +129,7 @@ router.beforeEach((to, _from, next) => {
 
   // Role-based access control
   const roles = (to.meta as any)?.roles as string[] | undefined;
-  const userRole = store.userInfo?.role;
+  const userRole = normalizeRole(store.userInfo?.role);
 
   if (roles && userRole && !roles.includes(userRole)) {
     // If user has role but not allowed, redirect to their default home

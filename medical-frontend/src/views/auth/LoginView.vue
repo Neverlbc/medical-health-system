@@ -52,13 +52,13 @@
         <header class="panel-header">
           <div class="brand-logo">
             <svg viewBox="0 0 100 100" class="hospital-cross hospital-cross--pulse">
-              <rect x="40" y="20" width="20" height="60" rx="4" fill="#ff4d4f" />
-              <rect x="20" y="40" width="60" height="20" rx="4" fill="#ff4d4f" />
-              <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255, 77, 79, 0.2)" stroke-width="2" />
+              <rect x="40" y="20" width="20" height="60" rx="4" fill="#c87868" />
+              <rect x="20" y="40" width="60" height="20" rx="4" fill="#c87868" />
+              <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(200, 120, 104, 0.22)" stroke-width="2" />
             </svg>
           </div>
           <h1 class="title">智慧医疗健康管理系统</h1>
-          <p class="tagline">SMART MEDICAL HEALTH · 数字化诊疗保障</p>
+          <p class="tagline">SMART MEDICAL HEALTH</p>
         </header>
 
         <el-form :model="form" :rules="rules" ref="formRef" class="login-form" label-position="left" label-width="70px" hide-required-asterisk>
@@ -193,7 +193,7 @@ const drawNodes = () => {
         if (dist < 120) {
           ctx.beginPath();
           ctx.lineWidth = 0.5;
-          ctx.strokeStyle = `rgba(42, 100, 255, ${0.1 * (1 - dist/120)})`;
+          ctx.strokeStyle = `rgba(112, 132, 101, ${0.1 * (1 - dist/120)})`;
           ctx.moveTo(node.x, node.y);
           ctx.lineTo(target.x, target.y);
           ctx.stroke();
@@ -204,7 +204,7 @@ const drawNodes = () => {
             const px = node.x + (target.x - node.x) * ratio;
             const py = node.y + (target.y - node.y) * ratio;
             ctx.beginPath();
-            ctx.fillStyle = 'rgba(42, 100, 255, 0.4)';
+            ctx.fillStyle = 'rgba(214, 168, 92, 0.34)';
             ctx.arc(px, py, 1.2, 0, Math.PI * 2);
             ctx.fill();
           }
@@ -213,7 +213,7 @@ const drawNodes = () => {
 
       // 绘制核心点
       ctx.beginPath();
-      ctx.fillStyle = `rgba(42, 100, 255, ${0.15 + Math.sin(node.pulse)*0.05})`;
+      ctx.fillStyle = `rgba(154, 106, 67, ${0.15 + Math.sin(node.pulse)*0.05})`;
       ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
       ctx.fill();
     });
@@ -265,72 +265,114 @@ const goRegister = () => {
 <style scoped lang="scss">
 .med-login-root {
   min-height: 100vh;
-  background-color: #fcfdfe;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
-  font-family: 'PingFang SC', 'Source Han Sans CN', sans-serif;
-  color: #333;
+  font-family: 'PingFang SC', 'Source Han Sans CN', 'Microsoft YaHei', sans-serif;
+  color: #2f2923;
+}
+
+.med-login-root::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(170, 147, 122, 0.035) 0 1px, transparent 1px 100%),
+    linear-gradient(0deg, rgba(170, 147, 122, 0.035) 0 1px, transparent 1px 100%),
+    radial-gradient(circle at 50% 50%, transparent 0 36%, rgba(255, 255, 255, 0.74) 72%);
+  background-size: 92px 92px, 92px 92px, 100% 100%;
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+}
+
+.med-login-root::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: none;
 }
 
 .bg-canvas {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
+  opacity: 0.18;
 }
 
-// 生物细胞背景
 .bio-cells {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
+  display: none;
 
   .cell {
     position: absolute;
     border-radius: 50%;
-    filter: blur(100px);
+    filter: blur(96px);
     opacity: 0.12;
-    animation: cell-float 30s ease-in-out infinite alternate;
+    animation: cell-float 28s ease-in-out infinite alternate;
 
-    &--1 { width: 400px; height: 400px; background: #2a64ff; top: -10%; left: -5%; }
-    &--2 { width: 350px; height: 350px; background: #409eff; bottom: 5%; right: -5%; animation-duration: 40s; }
-    &--3 { width: 200px; height: 200px; background: #64dcff; top: 30%; right: 20%; animation-duration: 25s; }
+    &--1 {
+      width: 460px;
+      height: 460px;
+      background: linear-gradient(135deg, #d6a85c, #f4dac0);
+      top: -18%;
+      left: -9%;
+    }
+
+    &--2 {
+      width: 420px;
+      height: 420px;
+      background: linear-gradient(135deg, #6f8263, #d9e4cf);
+      right: -10%;
+      bottom: -12%;
+      animation-duration: 38s;
+    }
+
+    &--3 {
+      width: 240px;
+      height: 240px;
+      background: linear-gradient(135deg, #c9895d, #fffaf5);
+      top: 27%;
+      right: 22%;
+      animation-duration: 24s;
+    }
   }
 }
 
 @keyframes cell-float {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(50px, 30px) scale(1.1); }
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(56px, 36px, 0) scale(1.12); }
 }
 
-// 可视化层
 .med-visual-layer {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 4;
+  pointer-events: none;
 
   .med-grid {
     position: absolute;
     inset: 0;
-    background-image: 
-      linear-gradient(rgba(42, 100, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(42, 100, 255, 0.04) 1px, transparent 1px);
-    background-size: 60px 60px;
+    background-image:
+      linear-gradient(rgba(154, 106, 67, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(154, 106, 67, 0.03) 1px, transparent 1px);
+    background-size: 96px 96px;
+    opacity: 0.34;
   }
 
   .med-ecg-container {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 200%;
-    height: 350px;
-    opacity: 0.15;
-    pointer-events: none;
-    animation: ecg-container-pulse 3.5s ease-in-out infinite;
+    bottom: -18px;
+    left: -10%;
+    width: 220%;
+    height: 330px;
+    opacity: 0.055;
+    animation: ecg-container-pulse 4.5s ease-in-out infinite;
 
     .med-ecg-svg {
       width: 100%;
@@ -339,31 +381,31 @@ const goRegister = () => {
 
     .med-ecg-line {
       fill: none;
-      stroke: #2a64ff;
-      stroke-width: 1.2;
+      stroke: #9a6a43;
+      stroke-width: 1.4;
       stroke-dasharray: 2000;
       stroke-dashoffset: 2000;
-      filter: drop-shadow(0 0 5px rgba(42, 100, 255, 0.5));
+      filter: drop-shadow(0 0 10px rgba(154, 106, 67, 0.36));
       animation: svg-scan 7s linear infinite;
     }
   }
 
   .dna-aside {
     position: absolute;
-    top: 38%;
+    top: 50%;
     transform: translateY(-50%);
-    width: 45px;
-    height: 65%;
-    opacity: 0.28;
+    width: 52px;
+    height: 68%;
+    opacity: 0.08;
 
-    &--left { left: 5.5%; }
-    &--right { right: 5.5%; }
+    &--left { left: 6.5%; }
+    &--right { right: 6.5%; }
 
     .dna-segment {
       position: absolute;
+      top: var(--top);
       width: 100%;
       height: 10px;
-      top: var(--top);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -372,19 +414,22 @@ const goRegister = () => {
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: #2a64ff;
-        box-shadow: 0 0 12px rgba(42, 100, 255, 0.6);
+        background: #9a6a43;
+        box-shadow: 0 0 14px rgba(154, 106, 67, 0.44);
         animation: helix-dot 3s ease-in-out infinite alternate;
         animation-delay: var(--off);
 
-        &--b { animation-delay: calc(var(--off) - 1.5s); background: #64dcff; }
+        &--b {
+          background: #6f8263;
+          animation-delay: calc(var(--off) - 1.5s);
+        }
       }
 
       .line {
         flex: 1;
         height: 1.5px;
-        background: rgba(42, 100, 255, 0.3);
         margin: 0 -4px;
+        background: linear-gradient(90deg, rgba(154, 106, 67, 0.12), rgba(154, 106, 67, 0.38), rgba(111, 130, 99, 0.16));
         animation: helix-line 3s ease-in-out infinite alternate;
         animation-delay: var(--off);
       }
@@ -398,246 +443,441 @@ const goRegister = () => {
 }
 
 @keyframes ecg-container-pulse {
-  0%, 100% { opacity: 0.1; transform: scaleY(1); }
-  50% { opacity: 0.25; transform: scaleY(1.08); }
+  0%, 100% { opacity: 0.12; transform: scaleY(1); }
+  50% { opacity: 0.24; transform: scaleY(1.05); }
 }
 
 @keyframes helix-dot {
-  0% { transform: translateX(-25px) scale(0.85); opacity: 0.4; }
-  100% { transform: translateX(25px) scale(1.15); opacity: 1; box-shadow: 0 0 15px rgba(42, 100, 255, 0.8); }
+  0% { transform: translateX(-27px) scale(0.82); opacity: 0.42; }
+  100% { transform: translateX(27px) scale(1.18); opacity: 1; box-shadow: 0 0 18px rgba(154, 106, 67, 0.58); }
 }
 
 @keyframes helix-line {
-  0%, 100% { transform: scaleX(1); opacity: 0.2; }
-  50% { transform: scaleX(0.1); opacity: 0.7; }
+  0%, 100% { transform: scaleX(1); opacity: 0.22; }
+  50% { transform: scaleX(0.12); opacity: 0.76; }
 }
 
-// 登录面板
 .login-panel {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 480px;
-  padding: 24px;
+  max-width: 500px;
+  padding: 28px;
+  perspective: 1200px;
 }
 
 .card-container {
   position: relative;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(50px) saturate(180%);
-  padding: 55px 45px;
-  border-radius: 34px;
-  border: 1px solid rgba(255, 255, 255, 1);
-  box-shadow: 
-    0 15px 35px -5px rgba(0, 0, 0, 0.05),
-    0 40px 100px -20px rgba(42, 100, 255, 0.12);
+  overflow: hidden;
+  padding: 52px 48px 40px;
+  border: 1px solid rgba(231, 217, 202, 0.92);
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 245, 0.98), rgba(247, 241, 234, 0.92)),
+    radial-gradient(circle at 50% 0%, rgba(214, 168, 92, 0.12), transparent 44%);
+  backdrop-filter: blur(28px) saturate(170%);
+  box-shadow:
+    0 28px 70px rgba(77, 54, 36, 0.12),
+    0 10px 24px rgba(77, 54, 36, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(154, 106, 67, 0.08);
+  animation: panel-enter 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.card-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(214, 168, 92, 0.08), transparent 34%);
+  transform: translateX(-62%);
+}
+
+.card-container::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  z-index: 0;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 24px;
+}
+
+.card-glass-effect,
+.panel-header,
+.login-form {
+  position: relative;
+  z-index: 1;
+}
+
+.card-glass-effect {
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.88), transparent 44%),
+    radial-gradient(circle at 100% 100%, rgba(111, 130, 99, 0.08), transparent 38%);
+}
+
+@keyframes panel-enter {
+  from { opacity: 0; transform: translateY(22px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes card-sheen {
+  0%, 62% { transform: translateX(-68%); opacity: 0; }
+  70% { opacity: 0.82; }
+  100% { transform: translateX(68%); opacity: 0; }
 }
 
 .panel-header {
+  margin-bottom: 42px;
   text-align: center;
-  margin-bottom: 50px;
+
+  .brand-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 22px;
+    border: 1px solid rgba(200, 120, 104, 0.16);
+    border-radius: 24px;
+    background:
+      linear-gradient(145deg, rgba(255, 250, 245, 0.96), rgba(252, 238, 232, 0.82)),
+      radial-gradient(circle at 50% 18%, rgba(200, 120, 104, 0.2), transparent 58%);
+    box-shadow:
+      0 16px 34px rgba(154, 106, 67, 0.11),
+      inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  }
 
   .hospital-cross {
-    width: 76px;
-    height: 76px;
-    margin-bottom: 24px;
-    
+    width: 50px;
+    height: 50px;
+
     &--pulse {
-      animation: cross-heartbeat 2.5s ease-in-out infinite;
+      animation: cross-heartbeat 2.6s ease-in-out infinite;
     }
   }
 
   .title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #1a1a1a;
     margin: 0;
-    letter-spacing: -0.5px;
+    color: #2f2923;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    line-height: 1.18;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 
   .tagline {
-    font-size: 13px;
-    font-weight: 600;
-    color: #8e8e93;
-    margin-top: 12px;
-    letter-spacing: 1.5px;
+    margin: 12px 0 0;
+    color: #8a7a6c;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2.4px;
   }
 }
 
 @keyframes cross-heartbeat {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255, 77, 79, 0.2)); }
-  50% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(255, 77, 79, 0.4)); }
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(200, 120, 104, 0.18)); }
+  50% { transform: scale(1.06); filter: drop-shadow(0 0 20px rgba(200, 120, 104, 0.34)); }
 }
 
 .form-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #4a4a4a;
-  letter-spacing: 1px;
   display: inline-block;
+  color: #4a3a2e;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
   vertical-align: middle;
 }
 
 :deep(.el-form-item) {
-  margin-bottom: 28px;
   display: flex;
   align-items: center;
+  margin-bottom: 24px;
+}
+
+:deep(.el-form-item__label) {
+  color: #4a3a2e;
 }
 
 :deep(.med-input) {
   .el-input__wrapper {
-    background-color: #f7f9fc !important;
-    border-radius: 15px;
-    padding: 10px 18px;
-    box-shadow: none !important;
-    border: 1px solid rgba(42, 100, 255, 0.05) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 56px;
+    padding: 0 18px;
+    border: 1px solid rgba(178, 156, 132, 0.38) !important;
+    border-radius: 16px;
+    background:
+      linear-gradient(180deg, rgba(255, 250, 245, 0.98), rgba(248, 241, 234, 0.96)) !important;
+    box-shadow:
+      0 10px 22px rgba(77, 54, 36, 0.045),
+      inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+
+    &:hover {
+      border-color: rgba(154, 106, 67, 0.28) !important;
+    }
 
     &.is-focus {
-      background-color: #fff !important;
-      border-color: #2a64ff !important;
-      box-shadow: 0 0 0 4px rgba(42, 100, 255, 0.08) !important;
+      border-color: rgba(154, 106, 67, 0.72) !important;
+      background: rgba(255, 250, 245, 0.98) !important;
+      box-shadow:
+        0 0 0 4px rgba(214, 168, 92, 0.13),
+        0 16px 30px rgba(154, 106, 67, 0.12) !important;
     }
+  }
+
+  .el-input__inner {
+    color: #2f2923;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .el-input__prefix,
+  .el-input__suffix {
+    color: #8a7a6c;
   }
 }
 
 .form-actions {
   display: flex;
   justify-content: space-between;
-  margin: 15px 4px 45px;
+  margin: 8px 4px 34px;
   font-size: 14px;
 }
 
-.btn-submit {
-  width: 100%;
-  height: 62px;
-  border: none;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #409eff, #2a64ff);
-  color: #fff;
-  font-size: 17px;
+:deep(.el-checkbox) {
+  height: auto;
+  color: #8a5a38;
   font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 12px 28px -10px rgba(42, 100, 255, 0.5);
-  transition: all 0.4s;
+
+  .el-checkbox__input.is-checked .el-checkbox__inner {
+    border-color: #9a6a43;
+    background: linear-gradient(135deg, #d6a85c, #9a6a43);
+  }
+
+  .el-checkbox__label {
+    color: #8a5a38;
+    font-weight: 700;
+  }
+}
+
+.btn-submit {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
+  width: 100%;
+  height: 58px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, #9a6a43 0%, #c9895d 52%, #6f4b2f 100%);
+  box-shadow:
+    0 18px 34px -16px rgba(154, 106, 67, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(61, 39, 24, 0.24);
+  color: #fff;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  transition: transform 0.28s ease, box-shadow 0.28s ease, filter 0.28s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 15px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 54%);
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: -22%;
+    width: 26%;
+    height: 180%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+    transform: rotate(18deg);
+    transition: left 0.55s ease;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 22px 35px -10px rgba(42, 100, 255, 0.4);
-    filter: brightness(1.05);
+    box-shadow:
+      0 24px 42px -18px rgba(154, 106, 67, 0.64),
+      inset 0 1px 0 rgba(255, 255, 255, 0.38);
+    filter: saturate(1.08) brightness(1.03);
+
+    &::after {
+      left: 104%;
+    }
   }
 
-  &:active { transform: translateY(-1px); }
-  &:disabled { opacity: 0.8; cursor: not-allowed; }
+  &:active {
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.82;
+  }
 }
 
 .panel-footer {
-  margin-top: 40px;
-  text-align: center;
+  margin-top: 34px;
+  color: #9a8a7a;
   font-size: 14px;
-  color: #a1a1a1;
+  text-align: center;
 
   .link-action {
-    color: #2a64ff;
-    font-weight: 700;
+    position: relative;
     margin-left: 8px;
+    color: #8a5a38;
     cursor: pointer;
-    transition: 0.2s;
-    &:hover { border-bottom: 2px solid; }
+    font-weight: 900;
+    transition: color 0.2s ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      height: 2px;
+      border-radius: 999px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.2s ease;
+    }
+
+    &:hover {
+      color: #6f4b2f;
+
+      &::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+    }
   }
 }
 
 .page-info-deco {
-  position: absolute;
-  bottom: 35px;
-  width: 100%;
-  text-align: center;
-  font-size: 10px;
-  color: #c7c7cc;
-  letter-spacing: 2px;
-  font-weight: 700;
-  display: flex;
-  justify-content: center;
-  gap: 40px;
+  display: none;
 }
 
 @media (max-width: 768px) {
   .login-panel {
     max-width: 100%;
-    padding: 16px;
+    padding: 18px;
   }
-  
+
   .card-container {
-    padding: 40px 24px;
-    border-radius: 24px;
+    padding: 34px 22px 30px;
+    border-radius: 28px;
   }
-  
+
+  .card-container::after {
+    inset: 10px;
+    border-radius: 22px;
+  }
+
   .panel-header {
-    margin-bottom: 36px;
-    
-    .hospital-cross {
-      width: 60px;
-      height: 60px;
+    margin-bottom: 28px;
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
       margin-bottom: 16px;
+      border-radius: 22px;
     }
-    
+
+    .hospital-cross {
+      width: 54px;
+      height: 54px;
+    }
+
     .title {
-      font-size: 22px;
+      font-size: 23px;
+      letter-spacing: -0.4px;
     }
-    
+
     .tagline {
-      font-size: 11px;
-      letter-spacing: 1px;
+      font-size: 10px;
+      letter-spacing: 1.1px;
     }
   }
-  
+
   .dna-aside {
     display: none !important;
   }
-  
+
   .med-ecg-container {
-    height: 200px !important;
+    height: 190px !important;
   }
-  
-  .btn-submit {
-    height: 54px;
-    font-size: 15px;
-    border-radius: 14px;
-  }
-  
+
   :deep(.el-form-item) {
-    margin-bottom: 20px;
     flex-direction: column;
     align-items: flex-start;
-    
+    margin-bottom: 18px;
+
     .el-form-item__label {
       margin-bottom: 8px;
       padding: 0 !important;
     }
-    
+
     .el-form-item__content {
       width: 100%;
     }
   }
-  
+
+  :deep(.med-input) {
+    .el-input__wrapper {
+      min-height: 54px;
+      border-radius: 16px;
+    }
+  }
+
   .form-actions {
-    margin: 10px 0 30px;
+    margin: 8px 0 26px;
   }
-  
+
+  .btn-submit {
+    height: 56px;
+    border-radius: 16px;
+    font-size: 15px;
+    letter-spacing: 3px;
+  }
+
   .panel-footer {
-    margin-top: 28px;
+    margin-top: 26px;
   }
-  
-  .page-info-deco {
-    bottom: 16px;
-    font-size: 9px;
-    letter-spacing: 1px;
-    padding: 0 20px;
-    gap: 20px;
+
+  .page-info-deco { display: none; }
+}
+
+@media (max-width: 380px) {
+  .card-container {
+    padding-inline: 18px;
+  }
+
+  .panel-header .title {
+    font-size: 21px;
   }
 }
 </style>

@@ -151,22 +151,23 @@ npm run dev
 ```
 DB_URL=jdbc:mysql://localhost:3306/medical_health?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
 DB_USERNAME=root
-DB_PASSWORD=root
+DB_PASSWORD=change-me
 REDIS_HOST=localhost
 REDIS_PORT=6379
 DEEPSEEK_API_KEY=xxx
 JWT_SECRET=please-change-in-dev
 ```
+可复制 `medical-backend/.env.example` 为本地 `.env` 管理上述变量；`.env` 已加入忽略规则。Spring Boot 默认读取系统环境变量，若使用 `.env` 文件，请通过 IDE EnvFile 插件、启动脚本或终端命令先加载变量后再启动。
 
-## 9. UI/UX 设计规范 (Digital Clinical)
+## 9. UI/UX 设计规范 (Warm Premium Clinical)
 
 为了保持系统专业且高端的医疗感，请遵循以下 UI 准则：
 
 ### 9.1 色彩体系
-- **主色 (Clinical Blue)**: `#2a64ff` - 代表专业与科技。
-- **辅助蓝 (Cyan Vital)**: `#64dcff` - 用于渐变，增加活力感。
-- **警示色 (Alert Red)**: `#ff4d4f` - 用于健康预警与危险操作。
-- **背景色 (Pure Gray)**: `#f8fafc` - 保持界面清爽。
+- **主色 (Warm Brown)**: `#9a6a43` - 用于主按钮、导航激活态和核心强调。
+- **辅助色 (Sage Green)**: `#6f8263` - 用于健康、平稳、成功状态。
+- **警示色 (Soft Rose)**: `#c87868` - 用于风险、危险操作和医疗十字点缀。
+- **背景色 (Warm Ivory)**: `#f6f1ea` / `#fffaf5` - 保持温馨、克制、可信的医疗服务感。
 
 ### 9.2 组件风格
 - **圆角 (Border Radius)**: 容器统一使用 `12px` - `24px` 的大圆角，营造柔和感。
@@ -186,5 +187,5 @@ JWT_SECRET=please-change-in-dev
 - 重要里程碑记录在 `docs/plans/` 中
 - 每日/每周同步更新 `docs/STATUS.md`
 
-最后更新时间：2026-01-24
+最后更新时间：2026-05-05
 

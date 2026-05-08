@@ -72,7 +72,7 @@
     <!-- 二级卡片区 -->
     <el-row :gutter="24" class="content-row">
       <!-- 健康预警 -->
-      <el-col :span="14">
+      <el-col :span="24">
         <div class="med-panel">
           <div class="panel-header">
             <div class="p-title">
@@ -103,45 +103,20 @@
         </div>
       </el-col>
 
-      <!-- AI 建议 -->
-      <el-col :span="10">
-        <div class="med-panel ai-tip-panel">
-          <div class="panel-header">
-            <div class="p-title">
-              <el-icon><MagicStick /></el-icon>
-              <span>AI 定制健康建议</span>
-            </div>
-          </div>
-          <div class="panel-body" v-loading="tipLoading">
-            <div class="ai-suggestion-box">
-              <div class="ai-avatar">🤖</div>
-              <div class="ai-chat-bubble">
-                {{ dailyTip || '正在分析您的健康趋势并生成建议...' }}
-              </div>
-            </div>
-            <div class="ai-actions">
-              <el-button type="primary" size="small" round :icon="Refresh" @click="fetchDailyTip">重新生成</el-button>
-            </div>
-          </div>
-        </div>
-      </el-col>
     </el-row>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/store/modules/auth';
-import { 
-  DataLine, ChatDotRound, Calendar, Document, Refresh, 
-  WarningFilled, MagicStick, Check, ArrowRight 
+import {
+  DataLine, ChatDotRound, Calendar, Document, Refresh,
+  WarningFilled, Check, ArrowRight
 } from '@element-plus/icons-vue';
 import { ref, onMounted, computed } from 'vue';
-import { aiApi } from '@/api/modules/ai';
 import { getHealthDataPage, type HealthData } from '@/api/modules/health';
 
 const authStore = useAuthStore();
-const dailyTip = ref('');
-const tipLoading = ref(false);
 const alertLoading = ref(false);
 const abnormalRecords = ref<HealthData[]>([]);
 
@@ -149,18 +124,6 @@ const currentTimestamp = computed(() => {
   const now = new Date();
   return `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
 });
-
-const fetchDailyTip = async () => {
-  tipLoading.value = true;
-  try {
-    const res = await aiApi.getDailyTip();
-    dailyTip.value = res;
-  } catch (error) {
-    dailyTip.value = '今天也要记得规律作息哦，多喝热水对健康非常有益。';
-  } finally {
-    tipLoading.value = false;
-  }
-};
 
 const fetchHealthAlerts = async () => {
   alertLoading.value = true;
@@ -215,7 +178,6 @@ const formatMeasureTime = (time: string) => {
 };
 
 onMounted(() => {
-  fetchDailyTip();
   fetchHealthAlerts();
 });
 </script>
@@ -229,7 +191,7 @@ onMounted(() => {
 // 欢迎横幅
 .welcome-banner {
   height: 200px;
-  background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+  background: linear-gradient(135deg, #8a5a38 0%, #c9895d 100%);
   border-radius: 24px;
   position: relative;
   overflow: hidden;
@@ -238,7 +200,7 @@ onMounted(() => {
   align-items: center;
   color: #fff;
   margin-bottom: 40px;
-  box-shadow: 0 20px 40px rgba(24, 144, 255, 0.15);
+  box-shadow: 0 20px 40px rgba(77, 54, 36, 0.13);
 
   .banner-grid-overlay {
     position: absolute;
@@ -324,7 +286,7 @@ onMounted(() => {
     .arrow-icon { opacity: 1; transform: translateX(0); }
   }
 
-  &.blue { --theme-color: #1890ff; .card-icon { background: #e6f7ff; color: #1890ff; } }
+  &.blue { --theme-color: #9a6a43; .card-icon { background: #fbf4ec; color: #9a6a43; } }
   &.green { --theme-color: #52c41a; .card-icon { background: #f6ffed; color: #52c41a; } }
   &.orange { --theme-color: #fa8c16; .card-icon { background: #fff7e6; color: #fa8c16; } }
   &.purple { --theme-color: #722ed1; .card-icon { background: #f9f0ff; color: #722ed1; } }
@@ -357,7 +319,7 @@ onMounted(() => {
     padding: 24px 24px 0; display: flex; justify-content: space-between; align-items: center;
     .p-title {
       display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; color: #1a1a1a;
-      .el-icon { color: #1890ff; font-size: 20px; }
+      .el-icon { color: #9a6a43; font-size: 20px; }
     }
   }
 
@@ -372,7 +334,7 @@ onMounted(() => {
   display: flex; padding: 16px; border-radius: 16px; gap: 16px;
   &.danger { background: #fff1f0; border-left: 5px solid #ff4d4f; .item-icon { color: #ff4d4f; } }
   &.warning { background: #fff7e6; border-left: 5px solid #faad14; .item-icon { color: #faad14; } }
-  &.low { background: #f0f5ff; border-left: 5px solid #2f54eb; .item-icon { color: #2f54eb; } }
+  &.low { background: #fbf4ec; border-left: 5px solid #9a6a43; .item-icon { color: #9a6a43; } }
 
   .item-icon { font-weight: 900; font-size: 20px; }
   .item-content { flex: 1; }
@@ -381,14 +343,6 @@ onMounted(() => {
   .item-time { font-size: 12px; color: #8c8c8c; }
   .item-val { font-size: 13px; color: #595959; }
 }
-
-// AI 建议
-.ai-suggestion-box {
-  background: #f7f9fc; border-radius: 20px; padding: 20px; position: relative; margin-top: 10px;
-  .ai-avatar { position: absolute; top: -35px; left: 20px; font-size: 30px; }
-  .ai-chat-bubble { font-size: 14px; line-height: 1.8; color: #4a4a4a; font-weight: 500; }
-}
-.ai-actions { margin-top: 20px; text-align: right; }
 
 .empty-state {
   height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #bfbfbf;
@@ -508,18 +462,280 @@ onMounted(() => {
     .item-val { font-size: 12px; }
   }
   
-  .ai-suggestion-box {
-    padding: 16px;
-    border-radius: 16px;
-    
-    .ai-avatar {
-      top: -28px;
-      left: 16px;
-      font-size: 24px;
+}
+
+/* 简约高级版患者首页覆盖 */
+.dashboard-container {
+  max-width: 1480px;
+}
+
+.welcome-banner {
+  min-height: 210px;
+  height: auto;
+  margin-bottom: 36px;
+  padding: 38px 44px;
+  border: 1px solid #e5e7eb;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(111, 130, 99, 0.12), transparent 28%),
+    radial-gradient(circle at 16% 20%, rgba(154, 106, 67, 0.07), transparent 34%),
+    linear-gradient(135deg, #ffffff, #f8fafc);
+  color: #2f2923;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.06);
+
+  .banner-grid-overlay {
+    opacity: 0.5;
+    background-image: radial-gradient(circle at 2px 2px, rgba(100, 116, 139, 0.08) 1px, transparent 0);
+    background-size: 28px 28px;
+  }
+
+  .user-greeting {
+    .greeting-tag {
+      padding: 6px 12px;
+      background: #f7f3ef;
+      color: #8a5a38;
+      border: 1px solid rgba(154, 106, 67, 0.13);
+      border-radius: 999px;
+      letter-spacing: 1.4px;
     }
-    
-    .ai-chat-bubble {
+
+    h2 {
+      margin-top: 14px;
+      color: #2f2923;
+      font-size: 32px;
+      letter-spacing: -0.8px;
+    }
+
+    p {
+      color: #7b6b5c;
+      opacity: 1;
+      font-size: 15px;
+    }
+  }
+
+  .banner-stats {
+    min-width: 280px;
+    gap: 24px;
+    padding: 18px 28px;
+    border: 1px solid #e5e7eb;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 18px 36px rgba(15, 23, 42, 0.06);
+
+    .mini-stat {
+      .stat-value {
+        color: #2f2923;
+        font-size: 28px;
+      }
+
+      .stat-label {
+        color: #7b6b5c;
+        opacity: 1;
+      }
+    }
+
+    .divider {
+      background: #e5e7eb;
+    }
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 18px;
+
+  .title {
+    color: #2f2923;
+    font-size: 22px;
+    letter-spacing: -0.3px;
+  }
+
+  .subtitle {
+    color: #9a8a7a;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+  }
+}
+
+.service-grid {
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.service-card {
+  min-height: 112px;
+  padding: 24px 26px;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.045);
+  backdrop-filter: blur(14px);
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(154, 106, 67, 0.24);
+    box-shadow: 0 22px 52px rgba(15, 23, 42, 0.08);
+  }
+
+  &.blue { --theme-color: #9a6a43; .card-icon { background: #f7f3ef; color: #9a6a43; } }
+  &.green { --theme-color: #6f8263; .card-icon { background: #eef4ea; color: #6f8263; } }
+  &.orange { --theme-color: #c9895d; .card-icon { background: #fff4ea; color: #c9895d; } }
+  &.purple { --theme-color: #9b6a68; .card-icon { background: #fbefed; color: #9b6a68; } }
+
+  .card-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    margin-right: 18px;
+  }
+
+  .card-info {
+    h4 {
+      color: #2f2923;
+      font-size: 17px;
+      letter-spacing: -0.2px;
+    }
+
+    p {
+      color: #7b6b5c;
       font-size: 13px;
+    }
+  }
+}
+
+.content-row {
+  :deep(.el-col) {
+    margin-bottom: 24px;
+  }
+}
+
+.med-panel {
+  height: 390px;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.05);
+  backdrop-filter: blur(14px);
+
+  .panel-header {
+    padding: 26px 28px 0;
+
+    .p-title {
+      color: #2f2923;
+      font-size: 18px;
+      letter-spacing: -0.2px;
+
+      .el-icon {
+        color: #9a6a43;
+      }
+    }
+  }
+
+  .panel-body {
+    padding: 24px 28px 28px;
+  }
+}
+
+.alert-modern-list {
+  gap: 14px;
+}
+
+.alert-item {
+  padding: 18px 20px;
+  border-left: 0;
+  border-radius: 18px;
+
+  &.danger {
+    background: #fff5f5;
+    box-shadow: inset 4px 0 0 #ef4444;
+  }
+
+  &.warning {
+    background: #fffbeb;
+    box-shadow: inset 4px 0 0 #f59e0b;
+  }
+
+  &.low {
+    background: #f8fafc;
+    box-shadow: inset 4px 0 0 #9a6a43;
+
+    .item-icon {
+      color: #9a6a43;
+    }
+  }
+
+  .item-label {
+    color: #2f2923;
+  }
+
+  .item-val {
+    color: #66584b;
+  }
+}
+
+.empty-state {
+  color: #9a8a7a;
+
+  .check-circle {
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+}
+
+@media (max-width: 1100px) {
+  .content-row {
+    :deep(.el-col) {
+      max-width: 100%;
+      flex: 0 0 100%;
+    }
+  }
+
+  .med-panel {
+    height: auto;
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-banner {
+    padding: 24px;
+    border-radius: 22px;
+
+    .user-greeting {
+      text-align: left;
+
+      h2 {
+        font-size: 24px;
+      }
+    }
+
+    .banner-stats {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+  .section-header,
+  .service-grid {
+    padding: 0;
+  }
+
+  .service-card {
+    min-height: 96px;
+    padding: 18px;
+  }
+
+  .med-panel {
+    border-radius: 20px;
+
+    .panel-header {
+      padding: 20px 20px 0;
+    }
+
+    .panel-body {
+      padding: 20px;
     }
   }
 }

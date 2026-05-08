@@ -2,6 +2,7 @@ package com.medical.ai.controller;
 
 import com.medical.ai.service.DeepSeekService;
 import com.medical.common.result.Result;
+import com.medical.common.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
@@ -87,7 +88,12 @@ public class AIConsultationController {
     @GetMapping("/daily-tip")
     @Operation(summary = "每日健康小贴士")
     public Result<String> getDailyTip() {
-        Long userId = com.medical.common.utils.SecurityUtils.getUserId();
+        if (!isPatientRole()) {
+            String result = deepSeekService.answerHealthQuestion("请生成一条适合医护或管理人员的今日健康与工作提醒，简短、专业、温和。");
+            return Result.success(result);
+        }
+
+        Long userId = SecurityUtils.getUserId();
         var profile = healthProfileService.getProfile(userId);
         String json = com.alibaba.fastjson2.JSON.toJSONString(profile);
         
@@ -98,26 +104,19 @@ public class AIConsultationController {
     @PostMapping("/chat")
     @Operation(summary = "智能问诊(带档案)")
     public Result<String> chat(@RequestBody @Valid ChatRequest request) {
-        Long userId = com.medical.common.utils.SecurityUtils.getUserId();
-        var profile = healthProfileService.getProfile(userId);
-        String json = com.alibaba.fastjson2.JSON.toJSONString(profile);
-        
-        String result = deepSeekService.chatWithProfile(json, request.getMessage());
+        var deepSeekRequest = deepSeekService.buildRequest(buildChatSystemPrompt(), request.getMessage(), null);
+        var response = deepSeekService.chat(deepSeekRequest);
+        String result = extractContent(response);
         return Result.success(result);
     }
 
     @PostMapping(value = "/chat/stream", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "智能问诊-流式输出(SSE)")
     public org.springframework.web.servlet.mvc.method.annotation.SseEmitter chatStream(@RequestBody @Valid ChatRequest request) {
-        Long userId = com.medical.common.utils.SecurityUtils.getUserId();
-        var profile = healthProfileService.getProfile(userId);
-        String json = com.alibaba.fastjson2.JSON.toJSONString(profile);
-        
         org.springframework.web.servlet.mvc.method.annotation.SseEmitter emitter = 
             new org.springframework.web.servlet.mvc.method.annotation.SseEmitter(120000L); // 2分钟超时
         
-        String systemPrompt = "你是一位专业的医疗AI助手。以下是当前患者的健康档案（JSON格式）：" + json + 
-                "。请结合档案回答患者的问题。如果问题与档案无关，则正常回答。请注意：1. 如果患者询问用药，务必检查过敏史。2. 回答要严谨、专业，但语气要亲切。";
+        String systemPrompt = buildChatSystemPrompt();
         
         com.medical.ai.model.DeepSeekRequest deepSeekRequest = deepSeekService.buildRequest(systemPrompt, request.getMessage(), null);
         
@@ -159,6 +158,39 @@ public class AIConsultationController {
     public static class HealthAnalysisRequest {
         private String question;
         private Long patientId; // 可选，医生查询时使用
+    }
+
+    private boolean isPatientRole() {
+        return "PATIENT".equals(SecurityUtils.getUserRole());
+    }
+
+    private String buildChatSystemPrompt() {
+        if (isPatientRole()) {
+            Long userId = SecurityUtils.getUserId();
+            var profile = healthProfileService.getProfile(userId);
+            String json = com.alibaba.fastjson2.JSON.toJSONString(profile);
+            return "你是一位专业的医疗AI助手。以下是当前患者的健康档案（JSON格式）：" + json
+                    + "。请结合档案回答患者的问题。如果问题与档案无关，则正常回答。请注意：1. 如果患者询问用药，务必检查过敏史。2. 回答要严谨、专业，但语气要亲切。";
+        }
+
+        String role = SecurityUtils.getUserRole();
+        if ("DOCTOR".equals(role)) {
+            return "你是智慧医疗系统中的医生侧 Agent「云小医」。当前用户是医生。请只基于用户消息中提供的系统提醒和问题回答，帮助医生整理接诊优先级、重点患者复核方向和随访建议。不要假装拥有未提供的患者完整档案，不要触发或要求读取当前医生本人的患者档案。";
+        }
+        if ("ADMIN".equals(role)) {
+            return "你是智慧医疗系统中的管理侧 Agent「云小医」。当前用户是管理员。请只基于用户消息中提供的系统提醒和问题回答，帮助管理员整理运营风险、排班风险、预约处理和协同动作。不要输出患者隐私明细，不要假装拥有未提供的患者完整档案。";
+        }
+        return "你是智慧医疗系统中的角色化 Agent「云小医」。请基于用户消息中提供的角色、系统提醒和问题回答，不要假装拥有未提供的患者完整档案。";
+    }
+
+    private String extractContent(com.medical.ai.model.DeepSeekResponse response) {
+        if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
+            return "云小医暂时无法生成回复，请稍后再试。";
+        }
+        var message = response.getChoices().get(0).getMessage();
+        return message != null && message.getContent() != null
+                ? message.getContent()
+                : "云小医暂时无法生成回复，请稍后再试。";
     }
 }
 

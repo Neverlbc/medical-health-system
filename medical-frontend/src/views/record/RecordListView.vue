@@ -15,7 +15,7 @@
               filterable
               remote
               reserve-keyword
-              placeholder="🔍 快速查找患者并调阅病例"
+              placeholder="快速查找患者并调阅病例"
               :remote-method="onRemoteSearch"
               :loading="remoteLoading"
               class="quick-search mr-3"
@@ -63,25 +63,43 @@
         <el-table-column prop="age" label="年龄" width="70" align="center" />
         <el-table-column prop="allergies" label="过敏史摘要" min-width="120" show-overflow-tooltip>
           <template #default="{ row }">
-            <span :class="{ 'text-muted': !row.allergies }">{{ row.allergies || '未建立' }}</span>
+            <span
+              v-if="hasSummary(row.allergies)"
+              class="summary-chip"
+              :class="getAllergySummaryClass(row.allergies)"
+            >
+              {{ row.allergies }}
+            </span>
+            <span v-else class="summary-empty">暂无过敏记录</span>
           </template>
         </el-table-column>
         <el-table-column prop="medicalHistory" label="既往史摘要" min-width="150" show-overflow-tooltip>
           <template #default="{ row }">
-            <span :class="{ 'text-muted': !row.medicalHistory }">{{ row.medicalHistory || '未建立' }}</span>
+            <span v-if="hasSummary(row.medicalHistory)" class="summary-chip summary-chip--history">
+              {{ row.medicalHistory }}
+            </span>
+            <span v-else class="summary-empty">暂无既往史记录</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="familyHistory" label="家族史摘要" min-width="140" show-overflow-tooltip>
+          <template #default="{ row }">
+            <span v-if="hasSummary(row.familyHistory)" class="summary-chip summary-chip--family">
+              {{ row.familyHistory }}
+            </span>
+            <span v-else class="summary-empty">暂无家族史记录</span>
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="档案备注" min-width="150" show-overflow-tooltip>
           <template #default="{ row }">
             <span :class="{ 'text-tip': !row.remark && !row.id }">
-              {{ row.remark || (row.id ? '-' : '📄 暂无摘要，点击详情查看病历') }}
+              {{ row.remark || (row.id ? '-' : '暂无档案备注，进入详情页完善') }}
             </span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="220" fixed="right" align="center">
           <template #default="{ row }">
             <el-button size="small" :icon="Edit" @click="$router.push({ name: 'FullRecordDetail', params: { patientId: row.userId } })">详情/编辑</el-button>
-            <el-button size="small" :icon="Paperclip" @click="openAttachments(row.id)">附件</el-button>
+            <el-button size="small" :icon="Paperclip" :disabled="!row.id" @click="openAttachments(row.id)">附件</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -180,7 +198,7 @@ import { listRecords, createRecord, updateRecord, listAttachments, addAttachment
 import { ElMessage } from 'element-plus';
 import { useAuthStore } from '@/store/modules/auth';
 import { searchPatients, type SimpleUser } from '@/api/modules/user';
-import { Search, Plus, Edit, Paperclip, View, Document, UploadFilled } from '@element-plus/icons-vue';
+import { Search, Plus, Edit, Paperclip, Document, UploadFilled } from '@element-plus/icons-vue';
 
 const auth = useAuthStore();
 const route = useRoute();
@@ -222,6 +240,13 @@ const handleQuickJump = (userId: number) => {
     quickSearchUser.value = undefined;
   }
 };
+
+const hasSummary = (value?: string) => Boolean(value && value.trim());
+const isNegativeSummary = (value?: string) => {
+  const normalized = (value || '').trim();
+  return ['无', '暂无', '无过敏史', '无既往病史', '无家族病史'].includes(normalized);
+};
+const getAllergySummaryClass = (value?: string) => isNegativeSummary(value) ? 'summary-chip--safe' : 'summary-chip--risk';
 
 const load = async () => {
   loading.value = true;
@@ -337,7 +362,14 @@ const removeAttachment = async (id?: number) => {
 <style scoped lang="scss">
 .record {
   &__card {
-    border-radius: 8px;
+    border: 1px solid rgba(153, 120, 82, 0.16);
+    border-radius: 18px;
+    box-shadow: 0 18px 46px rgba(94, 72, 51, 0.08);
+
+    :deep(.el-card__header) {
+      background: linear-gradient(135deg, #fffaf4 0%, #f7efe3 100%);
+      border-bottom: 1px solid rgba(153, 120, 82, 0.14);
+    }
   }
 
   &__header {
@@ -350,6 +382,11 @@ const removeAttachment = async (id?: number) => {
       font-weight: 600;
       display: flex;
       align-items: center;
+      color: #4e3b2a;
+
+      .el-icon {
+        color: #a67645;
+      }
     }
 
     .header-actions {
@@ -371,6 +408,24 @@ const removeAttachment = async (id?: number) => {
     justify-content: flex-end;
     margin-top: 20px;
   }
+
+  :deep(.el-button--primary) {
+    --el-button-bg-color: #8f6a45;
+    --el-button-border-color: #8f6a45;
+    --el-button-hover-bg-color: #7c5a39;
+    --el-button-hover-border-color: #7c5a39;
+    --el-button-active-bg-color: #6e4f32;
+    --el-button-active-border-color: #6e4f32;
+  }
+
+  :deep(.el-input__wrapper.is-focus),
+  :deep(.el-select .el-input.is-focus .el-input__wrapper) {
+    box-shadow: 0 0 0 1px #a67645 inset;
+  }
+
+  :deep(.el-pagination.is-background .el-pager li.is-active) {
+    background-color: #8f6a45;
+  }
 }
 
 .mr-2 { margin-right: 8px; }
@@ -378,8 +433,53 @@ const removeAttachment = async (id?: number) => {
 .mb-4 { margin-bottom: 16px; }
 
 .fw-bold { font-weight: 600; color: #303133; }
-.text-muted { color: #909399; font-style: italic; font-size: 13px; }
-.text-tip { color: #409EFF; font-weight: 500; }
+.text-muted,
+.summary-empty {
+  color: #a59b8f;
+  font-size: 13px;
+}
+.text-tip {
+  color: #9a6a3a;
+  font-weight: 500;
+}
+
+.summary-chip {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  padding: 4px 9px;
+  border: 1px solid rgba(150, 116, 78, 0.18);
+  border-radius: 999px;
+  overflow: hidden;
+  color: #5b4531;
+  background: #fbf5ed;
+  font-size: 13px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-chip--risk {
+  border-color: rgba(190, 118, 64, 0.26);
+  color: #8a4f24;
+  background: #fff2e6;
+}
+
+.summary-chip--safe {
+  color: #5f725c;
+  background: #f2f6ed;
+  border-color: rgba(106, 132, 96, 0.22);
+}
+
+.summary-chip--history {
+  color: #67513c;
+  background: #f8f0e6;
+}
+
+.summary-chip--family {
+  color: #6a5444;
+  background: #f7efe8;
+}
 
 // 移动端适配
 @media (max-width: 768px) {

@@ -4,16 +4,16 @@
 [![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![DeepSeek](https://img.shields.io/badge/AI-DeepSeek-blue?logo=openai&logoColor=white)](https://www.deepseek.com/)
 
-> **极简 · 临床 · 智能** —— 基于 Spring Boot 2.7 与 DeepSeek AI 生态构建的现代化智慧医疗管理解决方案。
+> **温暖 · 临床 · 智能** —— 基于 Spring Boot 2.7 与 DeepSeek AI 生态构建的现代化智慧医疗管理解决方案。
 
 ---
 
 ## 🎨 视觉美学 (Digital Clinical Design)
 
-本项目采用 **"数字化诊疗 (Digital Clinical)"** 视觉体系，追求 **"高端极简 (Premium Minimalist)"** 的交互体验：
-- **高端医疗色调**：深邃医疗蓝、活力青与纯净白的和谐统一。
-- **动态交互**：全屏 DNA 螺旋动效、AI 机器人微表情、骨架屏加载、流畅的页面过渡。
-- **数字化看板**：立体化统计卡片、实时脉动系统状态、专业医学图表。
+本项目采用 **“温暖高级医疗 (Warm Premium Clinical)”** 视觉体系，追求可信、克制、有人情味的交互体验：
+- **高端医疗色调**：暖棕、米白、鼠尾草绿与柔和玫瑰色统一替代大面积蓝白配色。
+- **动态交互**：登录页医学动效、AI 机器人微表情、首页云小医浮窗、流畅的页面过渡。
+- **数字化看板**：立体化统计卡片、角色化首页工作台、专业医学图表与健康提醒对话化呈现。
 
 ## ✨ 核心功能
 
@@ -25,6 +25,7 @@
 - **深度症状分析**：利用 DeepSeek 大模型进行多轮对话，提供精准的健康咨询与科室引导。
 - **医学验证保障**：AI 回复经过预设医学逻辑校验，提供专业化建议。
 - **情感化交互**：定制化医疗机器人形象，具备实时录入反馈与打字机效果。
+- **云小医 Agent**：登录后首页展示角色化机器人浮窗，将健康提醒、用药提醒、检查复查、接诊提醒和管理提醒放入对话中处理。
 
 ### 3. 健康预测与实时监测 📈
 - **体征趋势可视化**：血压、血糖、心率、体温等关键指标的动态对比看板。
@@ -149,7 +150,9 @@ export DEEPSEEK_API_URL="https://api.deepseek.com/v1/chat/completions"
 export DEEPSEEK_MODEL="deepseek-chat"
 ```
 
-如果未设置某个变量，应用会使用 `application.yml` 中定义的安全默认值；生产环境请务必覆盖默认值。
+也可以复制 `medical-backend/.env.example` 为本地 `.env` 管理变量；`.env` 已被 Git 忽略。Spring Boot 默认读取系统环境变量，若使用 `.env` 文件，请通过 IDE EnvFile 插件、启动脚本或终端命令先加载变量后再启动。
+
+如果未设置某个变量，应用会使用 `application.yml` 中定义的安全默认值；其中数据库密码默认为空，生产环境请务必覆盖 `DB_PASSWORD` 和 `JWT_SECRET`。
 
 ### 后端启动
 

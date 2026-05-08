@@ -19,6 +19,9 @@ mvnw.cmd
 # Spring Boot
 application-dev.yml
 application-prod.yml
+.env
+.env.*
+!.env.example
 
 # Node
 node_modules/

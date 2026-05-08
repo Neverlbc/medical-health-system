@@ -7,8 +7,8 @@
     <el-aside width="240px" class="side-aside" :class="{ 'mobile-open': sidebarOpen }">
       <div class="side-logo">
         <svg viewBox="0 0 100 100" class="logo-svg">
-          <rect x="35" y="15" width="30" height="70" rx="4" fill="#ff4d4f" />
-          <rect x="15" y="35" width="70" height="30" rx="4" fill="#ff4d4f" />
+          <rect x="35" y="15" width="30" height="70" rx="4" fill="#c87868" />
+          <rect x="15" y="35" width="70" height="30" rx="4" fill="#c87868" />
         </svg>
         <div class="logo-text">
           <h1>智慧医疗</h1>
@@ -21,8 +21,8 @@
           :default-active="activeMenu"
           router
           background-color="transparent"
-          text-color="rgba(255, 255, 255, 0.7)"
-          active-text-color="#fff"
+          text-color="#66584b"
+          active-text-color="#7a5032"
           class="side-menu"
         >
           <template v-if="role === 'PATIENT'">
@@ -127,6 +127,8 @@
         </router-view>
       </el-main>
     </el-container>
+
+    <YunXiaoYiAgent v-if="showYunXiaoYi" />
   </el-container>
 </template>
 
@@ -139,6 +141,7 @@ import {
   User, CaretBottom, Bell, Setting, SwitchButton, UserFilled, Timer, Expand
 } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
+import YunXiaoYiAgent from '@/components/YunXiaoYiAgent.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -169,7 +172,8 @@ const activeMenu = computed(() => {
 });
 
 const pageTitle = computed(() => (route.meta.title as string) || '工作台');
-const role = computed(() => authStore.userInfo?.role || 'PATIENT');
+const role = computed(() => authStore.userInfo?.role?.replace(/^ROLE_/, '') || 'PATIENT');
+const showYunXiaoYi = computed(() => ['PatientDashboard', 'DoctorDashboard'].includes(String(route.name || '')));
 const roleText = computed(() => {
   if (role.value === 'DOCTOR') return '医生';
   if (role.value === 'ADMIN') return '管理员';
@@ -254,9 +258,9 @@ const handleCommand = (cmd: string) => {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &.is-active {
-      background: linear-gradient(90deg, #2a64ff 0%, #3a80ff 100%) !important;
+      background: linear-gradient(90deg, #9a6a43 0%, #c9895d 100%) !important;
       color: #fff !important;
-      box-shadow: 0 4px 12px rgba(42, 100, 255, 0.3);
+      box-shadow: 0 4px 12px rgba(154, 106, 67, 0.26);
       
       &::before {
         content: '';
@@ -310,7 +314,7 @@ const handleCommand = (cmd: string) => {
   :deep(.el-breadcrumb__inner) {
     color: #8c8c8c;
     font-weight: 500;
-    &.is-link:hover { color: #2a64ff; }
+    &.is-link:hover { color: #8a5a38; }
   }
   :deep(.el-breadcrumb__item:last-child .el-breadcrumb__inner) {
     color: #1a1a1a;
@@ -327,7 +331,7 @@ const handleCommand = (cmd: string) => {
     color: #8c8c8c;
     cursor: pointer;
     transition: 0.3s;
-    &:hover { color: #2a64ff; }
+    &:hover { color: #8a5a38; }
   }
 
   .divider-v {
@@ -367,7 +371,7 @@ const handleCommand = (cmd: string) => {
     }
 
     .u-avatar {
-      background: linear-gradient(135deg, #2a64ff, #64dcff);
+      background: linear-gradient(135deg, #9a6a43, #d6a85c);
       font-weight: 700;
       color: #fff;
     }
@@ -416,7 +420,7 @@ const handleCommand = (cmd: string) => {
     
     &:hover {
       background-color: #f5f7fa;
-      color: #2a64ff;
+      color: #8a5a38;
     }
     
     .el-icon { margin-right: 8px; }
@@ -542,6 +546,185 @@ const handleCommand = (cmd: string) => {
   
   .main-content {
     padding: 20px;
+  }
+}
+
+/* 简约高级版主框架覆盖 */
+.layout-wrapper {
+  background: #f6f8fb;
+}
+
+.side-aside {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(154, 106, 67, 0.08), transparent 34%),
+    #ffffff;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 12px 0 34px rgba(15, 23, 42, 0.05);
+}
+
+.side-logo {
+  height: 96px;
+  padding: 0 28px;
+  background: transparent;
+  border-bottom: 1px solid #e5e7eb;
+
+  .logo-svg {
+    width: 34px;
+    height: 34px;
+    padding: 7px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .logo-text {
+    h1 {
+      color: #2f2923;
+      font-size: 19px;
+      letter-spacing: -0.2px;
+    }
+
+    p {
+      margin-top: 2px;
+      color: #9a8a7a;
+      letter-spacing: 0.7px;
+    }
+  }
+}
+
+.side-menu {
+  padding: 18px 14px;
+
+  :deep(.el-menu-item) {
+    height: 48px;
+    line-height: 48px;
+    margin-bottom: 8px;
+    border-radius: 14px;
+    color: #66584b !important;
+
+    &.is-active {
+      background: #f8fafc !important;
+      color: #7a5032 !important;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+
+      &::before {
+        left: -14px;
+        width: 3px;
+        background: linear-gradient(180deg, #9a6a43, #d6a85c);
+      }
+    }
+
+    &:hover:not(.is-active) {
+      background: #f8fafc !important;
+      color: #7a5032 !important;
+    }
+  }
+}
+
+.main-header {
+  height: 76px;
+  padding: 0 40px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.custom-breadcrumb {
+  :deep(.el-breadcrumb__inner) {
+    color: #9a8a7a;
+
+    &.is-link:hover {
+      color: #8a5a38;
+    }
+  }
+
+  :deep(.el-breadcrumb__item:last-child .el-breadcrumb__inner) {
+    color: #2f2923;
+    font-size: 16px;
+    font-weight: 800;
+  }
+}
+
+.header-right {
+  .notice-center {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #e7d9ca;
+    border-radius: 14px;
+    color: #7b6b5c;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+
+    &:hover {
+      color: #8a5a38;
+      border-color: #d6c3ae;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+  }
+
+  .divider-v {
+    background: #e5e7eb;
+  }
+
+  .admin-user {
+    padding: 8px 10px 8px 16px;
+    border: 1px solid transparent;
+    border-radius: 18px;
+
+    &:hover {
+      background: #f8fafc;
+      border-color: #e5e7eb;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .user-meta {
+      .u-name { color: #2f2923; }
+      .u-role { color: #9a8a7a; }
+    }
+
+    .u-avatar {
+      background: linear-gradient(135deg, #9a6a43, #d6a85c);
+      box-shadow: 0 10px 22px rgba(154, 106, 67, 0.22);
+    }
+  }
+}
+
+.main-content {
+  padding: 36px 40px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(111, 130, 99, 0.06), transparent 34%),
+    #f6f8fb;
+}
+
+.user-drop-menu {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+
+  :deep(.el-dropdown-menu__item) {
+    color: #66584b;
+
+    &:hover {
+      background-color: #f8fafc;
+      color: #8a5a38;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .side-logo {
+    height: 84px;
+  }
+
+  .main-header {
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .main-content {
+    padding: 16px;
   }
 }
 </style>
