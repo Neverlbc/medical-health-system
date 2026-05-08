@@ -10,7 +10,11 @@
 #   SERVER_USER        — SSH 用户名（通常 root）
 #   SERVER_SSH_KEY     — SSH 私钥（完整 PEM 格式）
 #   SERVER_PORT        — SSH 端口（默认 22，可选）
-#   DB_PASSWORD        — 生产数据库密码（注入到启动命令）
+#   DB_URL             — 生产数据库连接串（默认连接服务器 MySQL）
+#   DB_USERNAME        — 生产数据库用户名（默认 root）
+#   DB_PASSWORD        — 生产数据库密码（写入服务器环境文件）
+#   JWT_SECRET         — JWT 密钥
+#   DEEPSEEK_API_KEY   — DeepSeek API Key（可选）
 # ============================================================
 
 name: ⚙️ Deploy Backend
@@ -88,28 +92,8 @@ jobs:
             fi
             echo "☕ Java: $(java -version 2>&1 | head -1)"
 
-            # 确保 Systemd 服务存在
-            if [ ! -f /etc/systemd/system/medical.service ]; then
-              echo "⚙️ Creating medical.service..."
-              cat > /etc/systemd/system/medical.service << 'SVCEOF'
-            [Unit]
-            Description=Medical Health System Backend
-            After=network.target
-
-            [Service]
-            User=root
-            WorkingDirectory=/www/wwwroot/medical-backend
-            ExecStart=/usr/bin/java -Xms512m -Xmx1024m -XX:+UseG1GC -jar medical-admin.jar
-            SuccessExitStatus=143
-            Restart=always
-            RestartSec=10
-
-            [Install]
-            WantedBy=multi-user.target
-            SVCEOF
-              systemctl daemon-reload
-              systemctl enable medical
-            fi
+            # Systemd 服务会在每次部署时重写，确保数据库环境变量保持最新
+            systemctl enable medical 2>/dev/null || true
             echo "✅ Server environment ready"
 
       # ---- 7. 部署 JAR 到服务器 ----
@@ -161,8 +145,43 @@ jobs:
             mv "$SRC" "$DEPLOY_DIR/medical-admin.jar"
             echo "✅ JAR deployed to $DEPLOY_DIR/medical-admin.jar"
 
+            # 写入生产环境变量。不要把数据库密码提交到仓库，由 GitHub Secrets 注入。
+            cat > "$DEPLOY_DIR/.env" << 'ENVEOF'
+            DB_URL=${{ secrets.DB_URL || 'jdbc:mysql://47.85.48.198:3306/medical_health?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true' }}
+            DB_USERNAME=${{ secrets.DB_USERNAME || 'root' }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            REDIS_HOST=${{ secrets.REDIS_HOST || '127.0.0.1' }}
+            REDIS_PORT=${{ secrets.REDIS_PORT || '6379' }}
+            REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+            JWT_SECRET=${{ secrets.JWT_SECRET || 'medical-health-secret-key-please-change' }}
+            DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }}
+            ENVEOF
+            sed -i 's/^            //' "$DEPLOY_DIR/.env"
+            chmod 600 "$DEPLOY_DIR/.env"
+
+            # 每次部署都重写服务，避免旧 service 继续使用本地数据库默认值
+            cat > /etc/systemd/system/medical.service << 'SVCEOF'
+            [Unit]
+            Description=Medical Health System Backend
+            After=network.target mysql.service redis.service redis-server.service
+
+            [Service]
+            User=root
+            WorkingDirectory=/www/wwwroot/medical-backend
+            EnvironmentFile=/www/wwwroot/medical-backend/.env
+            ExecStart=/usr/bin/java -Xms512m -Xmx1024m -XX:+UseG1GC -jar medical-admin.jar
+            SuccessExitStatus=143
+            Restart=always
+            RestartSec=10
+
+            [Install]
+            WantedBy=multi-user.target
+            SVCEOF
+            sed -i 's/^            //' /etc/systemd/system/medical.service
+
             # 重启服务
             systemctl daemon-reload
+            systemctl enable medical
             systemctl restart medical
             sleep 10
 
