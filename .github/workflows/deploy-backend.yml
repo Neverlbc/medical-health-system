@@ -51,11 +51,26 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # ---- 3. Maven 构建（跳过测试加速部署） ----
+      # ---- 3. 校验生产环境密钥 ----
+      - name: 🔐 Validate production secrets
+        env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          if [ -z "$DB_PASSWORD" ]; then
+            echo "::error::DB_PASSWORD secret is required. Set it in GitHub repository Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+          if [ -z "$JWT_SECRET" ]; then
+            echo "::warning::JWT_SECRET is not set; deployment will use the default development value."
+          fi
+
+      # ---- 4. Maven 构建（跳过测试加速部署） ----
       - name: 🏗️ Build with Maven
         run: mvn clean package -DskipTests -pl medical-admin -am
 
-      # ---- 4. 验证 JAR 包 ----
+      # ---- 5. 验证 JAR 包 ----
       - name: ✅ Verify JAR artifact
         run: |
           JAR_PATH="medical-admin/target/medical-admin.jar"
@@ -65,7 +80,7 @@ jobs:
           fi
           echo "✅ JAR size: $(du -h $JAR_PATH | cut -f1)"
 
-      # ---- 5. 上传构建产物 ----
+      # ---- 6. 上传构建产物 ----
       - name: 📤 Upload build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -73,7 +88,7 @@ jobs:
           path: medical-backend/medical-admin/target/medical-admin.jar
           retention-days: 7
 
-      # ---- 6. 初始化服务器环境（首次部署自动创建） ----
+      # ---- 7. 初始化服务器环境（首次部署自动创建） ----
       - name: 🔧 Initialize server environment
         uses: appleboy/ssh-action@v1
         with:
@@ -96,7 +111,7 @@ jobs:
             systemctl enable medical 2>/dev/null || true
             echo "✅ Server environment ready"
 
-      # ---- 7. 部署 JAR 到服务器 ----
+      # ---- 8. 部署 JAR 到服务器 ----
       - name: 📦 Upload JAR to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -108,7 +123,7 @@ jobs:
           target: /tmp/medical-deploy/
           strip_components: 3
 
-      # ---- 8. 部署并重启后端服务 ----
+      # ---- 9. 部署并重启后端服务 ----
       - name: 🔄 Deploy and restart backend service
         uses: appleboy/ssh-action@v1
         with:
@@ -121,6 +136,21 @@ jobs:
             DEPLOY_DIR="/www/wwwroot/medical-backend"
             BACKUP_DIR="$DEPLOY_DIR/backup"
             SRC="/tmp/medical-deploy/medical-admin.jar"
+
+            print_diagnostics() {
+              echo "------ systemctl status medical ------"
+              systemctl status medical --no-pager -l || true
+              echo "------ journalctl -u medical.service ------"
+              journalctl -u medical.service --no-pager -n 120 || true
+              echo "------ listening ports ------"
+              ss -lntp | grep ':8080' || true
+              echo "------ application log ------"
+              if [ -f "$DEPLOY_DIR/logs/medical-health.log" ]; then
+                tail -n 120 "$DEPLOY_DIR/logs/medical-health.log" || true
+              else
+                echo "Application log not found: $DEPLOY_DIR/logs/medical-health.log"
+              fi
+            }
 
             echo "📋 Checking uploaded JAR..."
             if [ ! -f "$SRC" ]; then
@@ -158,6 +188,8 @@ jobs:
             ENVEOF
             sed -i 's/^            //' "$DEPLOY_DIR/.env"
             chmod 600 "$DEPLOY_DIR/.env"
+            echo "📋 Runtime env written:"
+            sed -E 's/(PASSWORD=).*/\1***/; s/(SECRET=).*/\1***/; s/(API_KEY=).*/\1***/' "$DEPLOY_DIR/.env"
 
             # 每次部署都重写服务，避免旧 service 继续使用本地数据库默认值
             cat > /etc/systemd/system/medical.service << 'SVCEOF'
@@ -183,14 +215,34 @@ jobs:
             systemctl daemon-reload
             systemctl enable medical
             systemctl restart medical
-            sleep 10
 
-            # 健康检查
-            if systemctl is-active --quiet medical; then
-              echo "✅ Backend service is running!"
-              systemctl status medical --no-pager -l | head -20
-            else
-              echo "❌ Backend service failed to start!"
-              journalctl -u medical.service --no-pager -n 30
+            # 服务和接口健康检查。systemd 进程存在不代表 Spring Boot 已经可用。
+            echo "⏳ Waiting for backend API..."
+            API_READY=0
+            for i in $(seq 1 30); do
+              if curl -fsS http://127.0.0.1:8080/v3/api-docs >/tmp/medical-api-docs.json; then
+                API_READY=1
+                break
+              fi
+              sleep 2
+            done
+
+            if [ "$API_READY" != "1" ]; then
+              echo "❌ Backend API did not become ready on 127.0.0.1:8080."
+              print_diagnostics
               exit 1
             fi
+
+            LOGIN_CHECK=$(curl -sS -X POST http://127.0.0.1:8080/api/v1/auth/login \
+              -H 'Content-Type: application/json' \
+              -d '{"username":"__deploy_probe__","password":"__deploy_probe__"}' || true)
+
+            if ! echo "$LOGIN_CHECK" | grep -q '"code":40003'; then
+              echo "❌ Backend API is reachable, but login probe did not return the expected database-backed response."
+              echo "$LOGIN_CHECK"
+              print_diagnostics
+              exit 1
+            fi
+
+            echo "✅ Backend service and database-backed login endpoint are healthy!"
+            systemctl status medical --no-pager -l | head -20
